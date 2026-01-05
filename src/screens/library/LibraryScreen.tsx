@@ -31,7 +31,7 @@ import { Actionbar } from '@components/Actionbar/Actionbar';
 import { useAppSettings, useHistory, useTheme } from '@hooks/persisted';
 import { useSearch, useBackHandler, useBoolean } from '@hooks';
 import { getString } from '@strings/translations';
-import { FAB, Portal } from 'react-native-paper';
+import { AnimatedFAB, Portal } from 'react-native-paper';
 import {
   markAllChaptersRead,
   markAllChaptersUnread,
@@ -165,15 +165,7 @@ const LibraryScreen = ({ navigation }: LibraryScreenProps) => {
           {...props}
           scrollEnabled
           indicatorStyle={styles.tabBarIndicator}
-          style={[
-            {
-              backgroundColor: theme.surface,
-              borderBottomColor: Color(theme.isDark ? '#FFFFFF' : '#000000')
-                .alpha(0.12)
-                .string(),
-            },
-            styles.tabBar,
-          ]}
+          style={styles.tabBar}
           tabStyle={styles.tabStyle}
           gap={8}
           inactiveColor={theme.secondary}
@@ -187,13 +179,12 @@ const LibraryScreen = ({ navigation }: LibraryScreenProps) => {
       styles.tabBar,
       styles.tabBarIndicator,
       styles.tabStyle,
-      theme.isDark,
       theme.primary,
       theme.rippleColor,
       theme.secondary,
-      theme.surface,
     ],
   );
+
   const renderScene = useCallback(
     ({
       route,
@@ -261,7 +252,7 @@ const LibraryScreen = ({ navigation }: LibraryScreenProps) => {
     ({ route, color }: TabViewLabelProps) => {
       return (
         <Row>
-          <Text style={[{ color }, styles.fontWeight500]}>{route.title}</Text>
+          <Text style={[{ color }, styles.tabLabel]}>{route.title}</Text>
           {showNumberOfNovels ? (
             <View
               style={[
@@ -283,7 +274,7 @@ const LibraryScreen = ({ navigation }: LibraryScreenProps) => {
       showNumberOfNovels,
       styles.badgeCtn,
       styles.badgetText,
-      styles.fontWeight500,
+      styles.tabLabel,
       theme.onSurfaceVariant,
       theme.surfaceVariant,
     ],
@@ -342,12 +333,12 @@ const LibraryScreen = ({ navigation }: LibraryScreenProps) => {
             title: getString('libraryScreen.extraMenu.updateCategory'),
             onPress: () =>
               //2 = local category
-              library[index].id !== 2 &&
+              categories[index].id !== 2 &&
               ServiceManager.manager.addTask({
                 name: 'UPDATE_LIBRARY',
                 data: {
-                  categoryId: library[index].id,
-                  categoryName: library[index].name,
+                  categoryId: categories[index].id,
+                  categoryName: categories[index].name,
                 },
               }),
           },
@@ -380,46 +371,45 @@ const LibraryScreen = ({ navigation }: LibraryScreenProps) => {
       ) : null}
 
       <TabView
-        commonOptions={{
-          label: renderLabel,
-        }}
-        lazy
         navigationState={navigationState}
-        renderTabBar={renderTabBar}
         renderScene={renderScene}
         onIndexChange={setIndex}
         initialLayout={{ width: layout.width }}
+        renderTabBar={renderTabBar}
+        lazy
+        renderLazyPlaceholder={() => (
+          <SourceScreenSkeletonLoading theme={theme} />
+        )}
       />
 
-      {useLibraryFAB &&
-      !isHistoryLoading &&
-      history &&
-      history.length !== 0 &&
-      !error ? (
-        <FAB
+      <Portal>
+        <AnimatedFAB
           style={[
             styles.fab,
             { backgroundColor: theme.primary, marginRight: rightInset + 16 },
           ]}
-          color={theme.onPrimary}
-          uppercase={false}
-          label={getString('common.resume')}
-          icon="play"
+          visible={useLibraryFAB && history.length > 0 && !error}
           onPress={() => {
+            const lastRead = history[0];
             navigation.navigate('ReaderStack', {
               screen: 'Chapter',
               params: {
                 novel: {
-                  path: history[0].novelPath,
-                  pluginId: history[0].pluginId,
-                  name: history[0].novelName,
+                  path: lastRead.novelPath,
+                  pluginId: lastRead.pluginId,
+                  name: lastRead.novelName,
                 } as NovelInfo,
-                chapter: history[0],
+                chapter: lastRead,
               },
             });
           }}
+          icon="play"
+          label={getString('common.resume')}
+          uppercase={false}
+          color={theme.onPrimary}
         />
-      ) : null}
+      </Portal>
+
       <SetCategoryModal
         novelIds={selectedNovelIds}
         closeModal={closeSetCategoryModal}
@@ -441,10 +431,12 @@ const LibraryScreen = ({ navigation }: LibraryScreenProps) => {
           actions={[
             {
               icon: 'label-outline',
+              title: getString('action.setCategory'),
               onPress: showSetCategoryModal,
             },
             {
               icon: 'check',
+              title: getString('action.markAsRead'),
               onPress: async () => {
                 const promises: Promise<any>[] = [];
                 selectedNovelIds.map(id =>
@@ -457,6 +449,7 @@ const LibraryScreen = ({ navigation }: LibraryScreenProps) => {
             },
             {
               icon: 'check-outline',
+              title: getString('action.markAsUnread'),
               onPress: async () => {
                 const promises: Promise<any>[] = [];
                 selectedNovelIds.map(id =>
@@ -469,6 +462,7 @@ const LibraryScreen = ({ navigation }: LibraryScreenProps) => {
             },
             {
               icon: 'delete-outline',
+              title: getString('action.removeFromLibrary'),
               onPress: () => {
                 removeNovelsFromLibrary(selectedNovelIds);
                 setSelectedNovelIds([]);
@@ -488,37 +482,39 @@ function createStyles(theme: ThemeColors) {
   return StyleSheet.create({
     badgeCtn: {
       borderRadius: 50,
-      marginLeft: 2,
+      marginLeft: 4,
       paddingHorizontal: 6,
       paddingVertical: 2,
-      position: 'relative',
     },
     badgetText: {
       fontSize: 12,
+      fontWeight: 'bold',
     },
     fab: {
-      bottom: 0,
-      margin: 16,
-      position: 'absolute',
+      bottom: 16,
       right: 0,
+      position: 'absolute',
     },
-    fontWeight500: {
-      fontWeight: 500,
+    tabLabel: {
+      fontWeight: '500',
+      letterSpacing: 0.5,
+      textTransform: 'uppercase',
     },
     globalSearchBtn: {
       margin: 16,
     },
     tabBar: {
-      borderBottomWidth: 1,
+      backgroundColor: theme.surface,
       elevation: 0,
     },
     tabBarIndicator: {
       backgroundColor: theme.primary,
-      height: 3,
+      height: 2,
     },
     tabStyle: {
-      minWidth: 100,
       width: 'auto',
+      paddingHorizontal: 12,
+      paddingVertical: 8,
     },
   });
 }

@@ -1,5 +1,5 @@
 import { useTheme } from '@hooks/persisted';
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Dimensions,
   Pressable,
@@ -8,12 +8,17 @@ import {
   ViewStyle,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import MaterialCommunityIcons from '@react-native-vector-icons/material-design-icons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { MaterialDesignIconName } from '@type/icon';
-import Animated, { SlideInDown, SlideOutDown } from 'react-native-reanimated';
+import Animated, {
+  SlideInDown,
+  SlideOutDown,
+} from 'react-native-reanimated';
+import { Menu } from 'react-native-paper';
 
 type Action = {
   icon: MaterialDesignIconName;
+  title: string;
   onPress: () => void;
 };
 
@@ -29,12 +34,16 @@ export const Actionbar: React.FC<ActionbarProps> = ({
   viewStyle,
 }) => {
   const theme = useTheme();
-
   const { bottom } = useSafeAreaInsets();
+  const [menuVisible, setMenuVisible] = useState(false);
 
   if (!active) {
     return null;
   }
+
+  const shownActions = actions.slice(0, 3);
+  const overflowActions = actions.slice(3);
+
   return (
     <Animated.View
       entering={SlideInDown.duration(150)}
@@ -49,14 +58,15 @@ export const Actionbar: React.FC<ActionbarProps> = ({
         viewStyle,
       ]}
     >
-      {actions.map(({ icon, onPress }, id) => (
+      {shownActions.map(({ icon, onPress }) => (
         <Pressable
-          key={id}
+          key={icon}
           android_ripple={{
             radius: 50,
             color: theme.rippleColor,
             borderless: true,
           }}
+          style={styles.actionButton}
           onPress={onPress}
         >
           <MaterialCommunityIcons
@@ -66,6 +76,42 @@ export const Actionbar: React.FC<ActionbarProps> = ({
           />
         </Pressable>
       ))}
+      {overflowActions.length > 0 ? (
+        <Menu
+          visible={menuVisible}
+          onDismiss={() => setMenuVisible(false)}
+          anchor={
+            <Pressable
+              android_ripple={{
+                radius: 50,
+                color: theme.rippleColor,
+                borderless: true,
+              }}
+              onPress={() => setMenuVisible(true)}
+              style={styles.actionButton}
+            >
+              <MaterialCommunityIcons
+                name="dots-vertical"
+                color={theme.onSurface}
+                size={24}
+              />
+            </Pressable>
+          }
+          contentStyle={{ backgroundColor: theme.surface2 }}
+        >
+          {overflowActions.map(({ title, onPress, icon }) => (
+            <Menu.Item
+              key={icon}
+              onPress={() => {
+                onPress();
+                setMenuVisible(false);
+              }}
+              title={title}
+              titleStyle={{ color: theme.onSurface }}
+            />
+          ))}
+        </Menu>
+      ) : null}
     </Animated.View>
   );
 };
@@ -81,5 +127,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     position: 'absolute',
     width: Dimensions.get('window').width,
+  },
+  actionButton: {
+    padding: 16,
   },
 });

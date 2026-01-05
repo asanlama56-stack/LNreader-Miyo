@@ -63,7 +63,7 @@ const BottomNavigator = () => {
     <Tab.Navigator
       screenOptions={() => ({
         headerShown: false,
-        animation: 'shift',
+        animation: 'fade_from_bottom',
         lazy: true,
         tabBarBadgeStyle: {
           backgroundColor: theme.error,
