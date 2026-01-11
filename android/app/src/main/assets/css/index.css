@@ -28,7 +28,7 @@ body {
   font-family: var(--readerSettings-fontFamily);
 }
 
-#LNReader-chapter {
+#Miyo-chapter {
   padding-left: var(--readerSettings-padding);
   padding-right: var(--readerSettings-padding);
 }

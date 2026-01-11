@@ -19,7 +19,7 @@ window.reader = new (function () {
   this.readerSettings = van.state(readerSettings);
   this.generalSettings = van.state(chapterGeneralSettings);
 
-  this.chapterElement = document.querySelector('#LNReader-chapter');
+  this.chapterElement = document.querySelector('#Miyo-chapter');
   this.selection = window.getSelection();
   this.viewport = document.querySelector('meta[name=viewport]');
 
@@ -540,10 +540,10 @@ window.pageReader = new (function () {
     if (
       reader.generalSettings.val.pageReader ===
       reader.generalSettings.oldVal.pageReader
-    ) {
-      return;
-    }
-    if (reader.generalSettings.val.pageReader) {
+      if (
+        this.currentElement &&
+        this.currentElement.id !== 'Miyo-chapter'
+      ) {
       const ratio = Math.min(
         0.99,
         (window.scrollY + reader.layoutHeight) / reader.chapterHeight,

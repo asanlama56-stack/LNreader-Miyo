@@ -117,7 +117,7 @@ export default class ServiceManager {
         taskDesc: getString('common.preparing'),
         taskIcon: { name: 'notification_icon', type: 'drawable' },
         color: '#00adb5',
-        linkingURI: 'lnreader://',
+        linkingURI: 'miyo://',
       }).catch(error => {
         Notifications.scheduleNotificationAsync({
           content: {

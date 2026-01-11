@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "LNReader",
-    "slug": "LNReader",
-    "scheme": "lnreader",
+    "name": "Miyo",
+    "slug": "Miyo",
+    "scheme": "miyo",
     "plugins": [
       "expo-localization",
       "react-native-edge-to-edge",

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, StyleSheet, View } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
 
 import { Appbar, List } from '@components';
 import { AboutScreenProps, MoreStackScreenProps } from '@navigators/types';
@@ -29,10 +29,14 @@ export const MoreHeader = ({
     />
     <View style={styles.overflow}>
       <View style={[styles.logoContainer, { backgroundColor: theme.surface }]}>
-        <Image
-          source={require('../../../../assets/logo.png')}
-          style={[styles.logo, { tintColor: theme.onSurface }]}
-        />
+        <View
+          style={[
+            styles.logo,
+            { backgroundColor: theme.primary, alignItems: 'center', justifyContent: 'center' },
+          ]}
+        >
+          <Text style={{ color: theme.onPrimary, fontSize: 36, fontWeight: '700' }}>M</Text>
+        </View>
       </View>
     </View>
     <List.Divider theme={theme} />

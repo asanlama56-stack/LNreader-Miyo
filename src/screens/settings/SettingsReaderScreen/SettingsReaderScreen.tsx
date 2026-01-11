@@ -235,7 +235,7 @@ const SettingsReaderScreen = () => {
               <body class="${
                 chapterGeneralSettings.pageReader ? 'page-reader' : ''
               }"> 
-                <div id="LNReader-chapter">
+                <div id="Miyo-chapter">
                 ${dummyHTML}
                 </div>
                 <div id="reader-ui"></div>

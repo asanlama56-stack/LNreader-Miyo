@@ -4,10 +4,10 @@
   </a>
 </p>
 
-<h1 align="center">LNReader</h1>
+<h1 align="center">Miyo</h1>
 
 <p align="center">
-  LNReader is a free and open source light novel reader for Android, inspired by Tachiyomi.
+  Miyo is a free and open source light novel reader for Android, inspired by Tachiyomi.
 </p>
 
 <div align="center">

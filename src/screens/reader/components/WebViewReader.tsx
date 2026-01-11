@@ -471,7 +471,7 @@ const WebViewReader: React.FC<WebViewReaderProps> = ({ onPress }) => {
               };
               ${chapterGeneralSettings.pageReader ? '' : 'display: none'}"
               ">${chapter.name}</div>
-              <div id="LNReader-chapter">
+              <div id="Miyo-chapter">
                 ${html}  
               </div>
               <div id="reader-ui"></div>

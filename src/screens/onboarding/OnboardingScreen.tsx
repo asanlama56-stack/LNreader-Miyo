@@ -1,7 +1,7 @@
 import { useTheme } from '@hooks/persisted';
 import { Text } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Image, StyleSheet, View } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
 import { Button } from '@components';
 import ThemeSelectionStep from './ThemeSelectionStep';
 import { useState } from 'react';
@@ -35,11 +35,9 @@ export default function OnboardingScreen() {
 
   return (
     <SafeAreaView style={[{ backgroundColor: theme.background }, styles.root]}>
-      <Image
-        source={require('../../../assets/logo.png')}
-        tintColor={theme.primary}
-        style={styles.logo}
-      />
+      <View style={[styles.logo, { backgroundColor: theme.primary, alignItems: 'center', justifyContent: 'center' }]}> 
+        <Text style={{ color: theme.onPrimary, fontSize: 36, fontWeight: '700' }}>M</Text>
+      </View>
       <Text
         variant="headlineLarge"
         style={[{ color: theme.onBackground }, styles.headline]}
